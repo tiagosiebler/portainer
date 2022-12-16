@@ -1,0 +1,31 @@
+FROM circleci/runner:launch-agent
+SHELL ["/bin/bash", "--login", "-c"]
+
+# change user
+USER $USERNAME
+
+# install nvm
+RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash;
+
+# set target node version
+ENV NODE_VERSION 18.12.1
+
+ENV NVM_DIR $HOME/.nvm
+
+# use nvm to install node version
+RUN \
+    . ~/.nvm/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default;
+
+# setup path
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# confirm npm and node commands work
+RUN npm -v
+RUN node -v
+
+# add git and ssh, so repos can be cloned via ssh
+RUN sudo apt-get update && sudo apt-get install git ssh -y

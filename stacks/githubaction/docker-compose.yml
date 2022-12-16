@@ -1,0 +1,7 @@
+version: '3.5'
+services:
+  ts01Runner:
+    image: localbuild/ghrunner:latest
+    environment:
+      - REPO=${REPO}
+      - ACCESS_TOKEN=${TOKEN}

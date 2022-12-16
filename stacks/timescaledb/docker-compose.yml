@@ -1,0 +1,25 @@
+version: '3.8'
+
+networks:
+  timescaledb:
+
+# Uses a named volume to persist our data
+volumes:
+  timescale-db-volume:
+    external: true
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    command: postgres -c shared_preload_libraries=timescaledb
+    networks:
+      - timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      - PGDATA=/var/lib/postgresql/data/timescaledb
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - timescale-db-volume:/var/lib/postgresql/data/timescaledb

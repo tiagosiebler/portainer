@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  clickhousedb:
+    image: clickhouse/clickhouse-server
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    cap_add:
+      - IPC_LOCK
+      - NET_ADMIN
+    environment:
+      - CLICKHOUSE_DB=defaultdb
+      - CLICKHOUSE_USER=somedefaultuser
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+      - CLICKHOUSE_PASSWORD=somedefaultpassword
+    ports:
+      - "8123:8123" # http api port
+      - "9004:9004" # mysql port
+      - "19000:9000" # native protocol port
+    volumes:
+      - /var/lib/clickhouse:/var/lib/clickhouse
+      - /var/log/clickhouse-server:/var/log/clickhouse-server
+      - /etc/clickhouse-server/config.d:/etc/clickhouse-server/config.d
+      - /etc/clickhouse-server/usert.d:/etc/clickhouse-server/usert.d
+    networks:
+      - mainnet
+
+  ch_client:
+    image: clickhouse/clickhouse-client
+    entrypoint:
+      - /bin/sleep
+    command:
+      - infinity
+    networks:
+      - mainnet
+
+  clickhouse_jdbc:
+    image: yandex/clickhouse-jdbc-bridge
+    ports:
+      - "9019:9019" # jdbc bridge
+    networks:
+      - mainnet
+    depends_on:
+      - clickhousedb
+
+networks:
+  mainnet:

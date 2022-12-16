@@ -1,0 +1,7 @@
+version: '3.5'
+services:
+  CircleCIRunner:
+    image: localbuild/circlecinode18:latest
+    environment:
+      - CIRCLECI_API_TOKEN=yourResourceClassTokenHere
+      - CIRCLECI_RESOURCE_CLASS=$tiagosiebler/mycirunner
